@@ -16,13 +16,13 @@
 			"notificationID": {
 				"title": "Notification ID",
 				"type": "string",
-				"requred": false,
+				"required": false,
 				"default": "my-http-curtain"
 			},
 			"notificationPassword": {
 				"title": "Notification Password",
 				"type": "string",
-				"requred": false,
+				"required": false,
 				"default": ""
 			},
 			"getCurrentPosUrl": {
@@ -53,7 +53,7 @@
 			"getCurrentPosRegEx": {
 				"title": "Get Current Position Regular Expression",
 				"type": "string",
-				"requred": false,
+				"required": false,
 				"default": ""
 			},
 			"getPositionStateUrl": {
@@ -122,7 +122,7 @@
 			"getTargetPosRegEx": {
 				"title": "Get Target Position Regular Expression",
 				"type": "string",
-				"requred": false,
+				"required": false,
 				"default": ""
 			},
 			"identifyUrl": {

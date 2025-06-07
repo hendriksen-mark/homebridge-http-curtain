@@ -16,6 +16,15 @@ Features:
 * Retrieve current position.
 * Send identify request (via Eve Home app) to locate your curtain.
 
+## Requirements
+
+- Homebridge v2.0.0 or later (works with v1.8+ but optimized for v2+)
+- Node.js 16.13.0 or later
+
+## Modern Homebridge API
+
+This plugin uses the modern Homebridge API with ES6 classes and Promise-based characteristic handlers for best performance and compatibility with Homebridge v2+.
+
 ## Installation
 
 First of all you need to have [Homebridge](https://github.com/nfarina/homebridge) installed. Refer to the repo for
