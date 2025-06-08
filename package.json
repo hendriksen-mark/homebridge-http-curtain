@@ -1,7 +1,7 @@
 {
   "name": "homebridge-http-curtain",
   "displayName": "http-curtain",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "HTTP curtain or window blinds for Homebridge",
   "license": "ISC",
   "keywords": [
@@ -29,7 +29,8 @@
     "homebridge": "^2.0.0-beta.23",
     "semantic-release": "^24.0.0",
     "semantic-release-cli": "^5.4.6",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "homebridge-config-ui-x":"^v5.0.0-beta.84" 
   },
   "scripts": {
     "semantic-release": "semantic-release",
@@ -45,7 +46,7 @@
     ],
     "ext": "ts",
     "ignore": [],
-    "exec": "npm run build && DEBUG= homebridge -U ./test/hbConfig -I -T -Q -P .",
+    "exec": "npm run build && DEBUG= node ./node_modules/homebridge-config-ui-x/dist/bin/hb-service.js run --stdout -U ./test/hbConfig -T -D -I -P ./",
     "signal": "SIGTERM",
     "env": {
       "NODE_OPTIONS": "--trace-warnings"
