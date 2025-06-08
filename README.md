@@ -5,7 +5,7 @@
 
 # homebridge-http-curtain
 
-This [Homebridge](https://github.com/nfarina/homebridge) plugin can be used to integrate your curtain which has an HTTP api into HomeKit. This controller supports push notification _without_ the need for HomeBridge to periodically pull the curtain position value. There are a few other HTTP based curtain / window blinds
+This [Homebridge](https://github.com/homebridge/homebridge) plugin can be used to integrate your curtain which has an HTTP api into HomeKit. This controller supports push notification _without_ the need for HomeBridge to periodically pull the curtain position value. There are a few other HTTP based curtain / window blinds
 plugins available, but I have not found any yet that does not poll the curtain controller continuously for position or state updates.
 
 _This is a fork of Supereg's [homebridge-http-temperature-sensor](https://github.com/Supereg/homebridge-http-temperature-sensor) modified to function as an curtain controller._
@@ -27,7 +27,7 @@ This plugin uses the modern Homebridge API with ES6 classes and Promise-based ch
 
 ## Installation
 
-First of all you need to have [Homebridge](https://github.com/nfarina/homebridge) installed. Refer to the repo for
+First of all you need to have [Homebridge](https://github.com/homebridge/homebridge) installed. Refer to the repo for
 instructions.  
 Then run the following command to install `homebridge-http-curtain`
 
