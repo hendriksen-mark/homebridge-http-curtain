@@ -14,7 +14,7 @@ let Service, Characteristic;
 // -----------------------------------------------------------------------------
 
 import { configParser, http, PullTimer } from "homebridge-http-base";
-import PACKAGE_JSON from './package.json' assert { type: "json" };
+import PACKAGE_JSON from '../package.json' assert { type: "json" };
 
 const MANUFACTURER = PACKAGE_JSON.author.name;
 const SERIAL_NUMBER = '001';

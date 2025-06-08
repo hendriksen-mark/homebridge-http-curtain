@@ -12,6 +12,6 @@
     "resolveJsonModule": true
   },
   "include": [
-    "index.ts"
+    "src/index.ts"
   ]
 }

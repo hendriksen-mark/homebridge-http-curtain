@@ -1,5 +1,5 @@
 {
-  "name": "@hendriksen-mark/homebridge-http-curtain",
+  "name": "homebridge-http-curtain",
   "displayName": "http-curtain",
   "version": "1.0.0",
   "description": "HTTP curtain or window blinds for Homebridge",
@@ -16,7 +16,7 @@
     "url": "https://github.com/hendriksen-mark/homebridge-http-curtain/issues"
   },
   "engines": {
-    "node": "^20.16.0 || ^22.5.1",
+    "node": ">=20.16.0",
     "homebridge": ">=1.8.0"
   },
   "author": {
@@ -34,9 +34,21 @@
   "scripts": {
     "semantic-release": "semantic-release",
     "lint": "eslint src/**/*.ts --max-warnings=0",
-    "watch": "npm run build && npm link && nodemon dist/index.js",
+    "watch": "nodemon",
     "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run lint && npm run build"
   },
-  "main": "index.ts"
+  "main": "src/index.ts",
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts",
+    "ignore": [],
+    "exec": "npm run build && DEBUG= homebridge -U ./test/hbConfig -I -T -Q -P .",
+    "signal": "SIGTERM",
+    "env": {
+      "NODE_OPTIONS": "--trace-warnings"
+    }
+  }
 }

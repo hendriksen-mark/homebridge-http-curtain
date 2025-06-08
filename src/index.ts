@@ -14,7 +14,7 @@
 // -----------------------------------------------------------------------------
 
 import { configParser, http, PullTimer } from "homebridge-http-base";
-import PACKAGE_JSON from './package.json';
+import PACKAGE_JSON from '../package.json';
 
 // Homebridge types (install @homebridge/types for best results)
 import type { API, Logging } from 'homebridge';
