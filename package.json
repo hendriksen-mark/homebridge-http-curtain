@@ -23,24 +23,23 @@
     "name": "Mark Hendriksen"
   },
   "dependencies": {
-    "got":"^14.4.7",
+    "axios": "^1.9.0",
     "async": "3.2.6"
   },
   "devDependencies": {
-    "homebridge": "^2.0.0-beta.23",
+    "homebridge": "^2.0.0-beta.29",
     "semantic-release": "24.2.5",
     "semantic-release-cli": "5.4.6",
     "nodemon": "3.1.10",
-    "homebridge-config-ui-x":"^v5.0.0-beta.84",
-    "@types/async":"^3.2.24",
-    "@types/got":"^9.6.12",
-    "eslint":"^9.28.0",
-    "@eslint/eslintrc":"^3.3.1",
-    "@eslint/js":"^9.28.0",
+    "homebridge-config-ui-x":"^v5.0.0-beta.86",
+    "@types/async": "^3.2.24",
+    "eslint": "^9.28.0",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.28.0",
     "@typescript-eslint/eslint-plugin": "^8.33.1",
-    "@typescript-eslint/parser":"^8.33.1",
-    "eslint-plugin-format":"^1.0.1",
-    "eslint-plugin-jest":"^28.13.0"
+    "@typescript-eslint/parser": "^8.33.1",
+    "eslint-plugin-format": "^1.0.1",
+    "eslint-plugin-jest": "^28.13.0"
   },
   "scripts": {
     "semantic-release": "semantic-release",
