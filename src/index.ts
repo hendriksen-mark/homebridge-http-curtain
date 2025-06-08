@@ -117,25 +117,25 @@ class HttpCurtain {
     }
   }
 
-  validateUrl(url: string, config: any, mandatory = false) {
-    const value = config[url];
+  validateUrl(url_command: string, config: any, mandatory = false) {
+    const value = config[url_command];
     if (
       (typeof value.url === 'string' && value.url.trim() !== '')
     ) {
       try {
-        (this as any)[url] = parseUrlProperty(value);
+        (this as any)[url_command] = parseUrlProperty(value);
       } catch (error: any) {
-        this.log.warn(`Error occurred while parsing '${url}': ${error.message}`);
+        this.log.warn(`Error occurred while parsing '${url_command}': ${error.message}`);
         this.log.warn('Aborting...');
         return;
       }
     } else if (mandatory) {
-      this.log.warn(`Property '${url}' is required!`);
+      this.log.warn(`Property '${url_command}' is required!`);
       this.log.warn('Aborting...');
       return;
     } else {
       // Optional URL missing or not a non-empty string/object with url, just skip
-      (this as any)[url] = undefined;
+      (this as any)[url_command] = undefined;
     }
   }
 
@@ -221,16 +221,35 @@ class HttpCurtain {
   }
 
   private handlePullTimer() {
+    // Update CurrentPosition
     this.getCurrentPosition()
       .then(value => {
-        this.homebridgeService.setCharacteristic(Characteristic.CurrentPosition, value);
+        this.homebridgeService.updateCharacteristic(Characteristic.CurrentPosition, value);
       })
       .catch(error => {
-        this.log('Error occurred while pulling update from curtain: ' + error.message);
-      })
-      .finally(() => {
-        this.resetPullTimer();
+        this.log('Error occurred while pulling update from curtain (CurrentPosition): ' + error.message);
       });
+
+    // Update TargetPosition
+    this.getTargetPosition()
+      .then(value => {
+        this.homebridgeService.updateCharacteristic(Characteristic.TargetPosition, value);
+      })
+      .catch(error => {
+        this.log('Error occurred while pulling update from curtain (TargetPosition): ' + error.message);
+      });
+
+    // Update PositionState
+    this.getPositionState()
+      .then(value => {
+        this.homebridgeService.updateCharacteristic(Characteristic.PositionState, value);
+      })
+      .catch(error => {
+        this.log('Error occurred while pulling update from curtain (PositionState): ' + error.message);
+      });
+
+    // Always reset the pull timer
+    this.resetPullTimer();
   }
 
   getCurrentPosition = async (): Promise<number> => {
