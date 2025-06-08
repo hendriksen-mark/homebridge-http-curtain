@@ -118,15 +118,12 @@ class HttpCurtain {
   }
 
   validateUrl(url: string, config: any, mandatory = false) {
-    if (config[url]) {
+    const value = config[url];
+    if (
+      (typeof value.url === 'string' && value.url.trim() !== '')
+    ) {
       try {
-        // Only parse if property exists and has a 'url' property (for objects) or is a string
-        const val = config[url];
-        if ((typeof val === 'object' && val.url) || typeof val === 'string') {
-          (this as any)[url] = parseUrlProperty(val);
-        } else {
-          throw new Error('undefined \'url\' property!');
-        }
+        (this as any)[url] = parseUrlProperty(value);
       } catch (error: any) {
         this.log.warn(`Error occurred while parsing '${url}': ${error.message}`);
         this.log.warn('Aborting...');
@@ -136,6 +133,9 @@ class HttpCurtain {
       this.log.warn(`Property '${url}' is required!`);
       this.log.warn('Aborting...');
       return;
+    } else {
+      // Optional URL missing or not a non-empty string/object with url, just skip
+      (this as any)[url] = undefined;
     }
   }
 
