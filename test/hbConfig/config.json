@@ -20,11 +20,7 @@
             "menuMode": "default",
             "tempUnits": "c",
             "lang": "auto",
-            "accessoryControl": {
-                "debug": true
-            },
-            "platform": "config",
-            "debug": true
+            "platform": "config"
         }
     ],
     "accessories": [
@@ -49,6 +45,7 @@
             "identifyUrl": {
                 "method": "GET"
             },
+            "pullInterval": 5000,
             "accessory": "HttpCurtain"
         }
     ]
