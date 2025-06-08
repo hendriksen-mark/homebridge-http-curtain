@@ -16,9 +16,13 @@
             "port": 8581,
             "auth": "none",
             "theme": "orange",
+            "lightingMode": "auto",
+            "menuMode": "default",
             "tempUnits": "c",
             "lang": "auto",
-            "sudo": false,
+            "accessoryControl": {
+                "debug": true
+            },
             "platform": "config",
             "debug": true
         }
