@@ -17,8 +17,8 @@
     "url": "https://github.com/hendriksen-mark/homebridge-http-curtain/issues"
   },
   "engines": {
-    "node": ">=20.16.0",
-    "homebridge": ">=1.8.0"
+    "node": "^18.20.4 || ^20.15.1 || ^22.0.0",
+    "homebridge": "^1.6.0 || ^2.0.0-beta.0"
   },
   "author": {
     "name": "Mark Hendriksen"
@@ -29,16 +29,13 @@
   "devDependencies": {
     "homebridge": "^2.0.0-beta.29",
     "semantic-release": "24.2.5",
-    "semantic-release-cli": "5.4.6",
     "nodemon": "3.1.10",
-    "homebridge-config-ui-x":"^v5.0.0-beta.86",
+    "homebridge-config-ui-x":"^v5.0.0-beta.87",
     "eslint": "^9.28.0",
-    "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.28.0",
     "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.33.1",
-    "eslint-plugin-format": "^1.0.1",
-    "eslint-plugin-jest": "^28.13.0"
+    "rimraf": "^6.0.1"
   },
   "scripts": {
     "semantic-release": "semantic-release",
