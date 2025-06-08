@@ -38,7 +38,7 @@
     "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run lint && npm run build"
   },
-  "main": "src/index.ts",
+  "main": "dist/src/index.js",
   "nodemonConfig": {
     "watch": [
       "src"
