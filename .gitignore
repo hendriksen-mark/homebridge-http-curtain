@@ -9,3 +9,4 @@ dist/
 /test/hbConfig/persist
 /test/hbConfig/accessories
 /test/hbConfig/backups
+/.vscode

@@ -13,7 +13,9 @@
 // Constants
 // -----------------------------------------------------------------------------
 
-import { configParser, http, PullTimer } from "homebridge-http-base";
+import { parseUrlProperty } from "./configParser";
+import { httpRequest } from "./http";
+import { PullTimer } from "./pulltimer";
 import PACKAGE_JSON from '../package.json';
 
 // Homebridge types (install @homebridge/types for best results)
@@ -118,7 +120,7 @@ class HttpCurtain {
     validateUrl(url: string, config: any, mandatory = false) {
         if (config[url]) {
             try {
-                (this as any)[url] = configParser.parseUrlProperty(config[url]);
+                (this as any)[url] = parseUrlProperty(config[url]);
             } catch (error: any) {
                 this.log.warn("Error occurred while parsing '" + url + "': " + error.message);
                 this.log.warn("Aborting...");
@@ -136,7 +138,7 @@ class HttpCurtain {
         this.log.info("Identify requested");
         if (this.identifyUrl) {
             return new Promise((resolve, reject) => {
-                http.httpRequest(this.identifyUrl, (error: any, response: any, body: any) => {
+                httpRequest(this.identifyUrl, (error: any, response: any, body: any) => {
                     if (error) {
                         this.log.error("identify() failed: %s", error.message);
                         reject(error);
@@ -200,7 +202,7 @@ class HttpCurtain {
 
     getCurrentPosition = (): Promise<number> => {
         return new Promise((resolve, reject) => {
-            http.httpRequest(this.getCurrentPosUrl, (error: any, response: any, body: any) => {
+            httpRequest(this.getCurrentPosUrl, (error: any, response: any, body: any) => {
                 if (this.pullTimer)
                     this.pullTimer.resetTimer();
 
@@ -239,7 +241,7 @@ class HttpCurtain {
     getPositionState = (): Promise<number> => {
         return new Promise((resolve, reject) => {
             if (this.getPositionStateUrl) {
-                http.httpRequest(this.getPositionStateUrl, (error: any, response: any, body: any) => {
+                httpRequest(this.getPositionStateUrl, (error: any, response: any, body: any) => {
                     if (this.pullTimer)
                         this.pullTimer.resetTimer();
 
@@ -278,7 +280,7 @@ class HttpCurtain {
             urlObj.body = urlObj.body.replace(/%d/g, value.toString());
             this.log.info("Requesting: %s for value: %d", urlObj.url, value);
 
-            http.httpRequest(urlObj, (error: any, response: any, body: any) => {
+            httpRequest(urlObj, (error: any, response: any, body: any) => {
                 if (error) {
                     this.log.error("setTargetPositionUrl() failed: %s", error.message);
                     reject(error);
@@ -298,7 +300,7 @@ class HttpCurtain {
     getTargetPosition = (): Promise<number> => {
         return new Promise((resolve, reject) => {
             if (this.getTargetPosUrl) {
-                http.httpRequest(this.getTargetPosUrl, (error: any, response: any, body: any) => {
+                httpRequest(this.getTargetPosUrl, (error: any, response: any, body: any) => {
                     if (error) {
                         this.log.error("getTargetPosition() failed: %s", error.message);
                         reject(error);
