@@ -1,14 +1,12 @@
 import { UrlObject } from './configParser';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 export type BodyReplacer = {
     searchValue: string,
     replacer: string,
 }
 
-export type RequestCallback = (error: any, response?: any, body?: any) => void;
-
-export function httpRequest(urlObject: UrlObject, callback: RequestCallback, ...bodyReplacer: BodyReplacer[]) {
+export function httpRequest(urlObject: UrlObject, ...bodyReplacer: BodyReplacer[]) {
   let url = urlObject.url;
   let body = urlObject.body;
   let auth: { username: string, password: string } | undefined = undefined;
@@ -33,16 +31,8 @@ export function httpRequest(urlObject: UrlObject, callback: RequestCallback, ...
     headers: urlObject.headers,
     auth: auth,
     timeout: urlObject.requestTimeout || 20000,
+    data: body,
   };
 
-  axios(axiosOptions)
-    .then((response: AxiosResponse) => {
-      callback(null, {
-        statusCode: response.status,
-        headers: response.headers,
-      } as any, response.data);
-    })
-    .catch((error: any) => {
-      callback(error, error.response, error.response?.data);
-    });
+  return axios(axiosOptions);
 }

@@ -71,7 +71,7 @@ class HttpCurtain {
   homebridgeService: any;
   pullInterval?: number;
   invertPosition: boolean;
-  pullTimer?: NodeJS.Timeout;
+  pullTimer?: any;
 
   constructor(log: Logging, config: HttpCurtainConfig, api: API) {
     this.log = log;
@@ -139,25 +139,21 @@ class HttpCurtain {
     }
   }
 
-  identify = (): Promise<void> => {
+  identify = async (): Promise<void> => {
     this.log.info('Identify requested');
     if (this.identifyUrl) {
-      return new Promise((resolve, reject) => {
-        httpRequest(this.identifyUrl, (error: any, response: any) => {
-          if (error) {
-            this.log.error('identify() failed: %s', error.message);
-            reject(error);
-          } else if (response.statusCode !== 200) {
-            this.log.error('identify() returned http error: %s', response.statusCode);
-            reject(new Error('Got http error code ' + response.statusCode));
-          } else {
-            resolve();
-          }
-        });
-      });
-    } else {
-      return Promise.resolve();
+      try {
+        const response = await httpRequest(this.identifyUrl);
+        if (response.status !== 200) {
+          this.log.error('identify() returned http error: %s', response.status);
+          throw new Error('Got http error code ' + response.status);
+        }
+      } catch (error: any) {
+        this.log.error('identify() failed: %s', error.message);
+        throw error;
+      }
     }
+    // else just resolve
   }
 
   getServices(): any[] {
@@ -237,134 +233,124 @@ class HttpCurtain {
       });
   }
 
-  getCurrentPosition = (): Promise<number> => {
-    return new Promise((resolve, reject) => {
-      httpRequest(this.getCurrentPosUrl, (error: any, response: any, body: any) => {
+  getCurrentPosition = async (): Promise<number> => {
+    try {
+      const response = await httpRequest(this.getCurrentPosUrl);
+      if (this.pullInterval) {
+        this.resetPullTimer();
+      }
+      if (response.status !== 200) {
+        this.log.error('getCurrentPosition() returned http error: %s', response.status);
+        throw new Error('Got http error code ' + response.status);
+      }
+      let body = response.data;
+      if (this.getCurrentPosRegEx) {
+        let matches = body.match(this.getCurrentPosRegEx);
+        if (matches && matches.length > 1) {
+          body = matches[1];
+          this.log.debug('Retrieving current position via regular expression. Full ungrouped match: %s', matches[0]);
+        } else {
+          this.log.warn('Your CurrentPosRegEx regular expression: "%s" did not match any part of the returned body: "%s"', this.getCurrentPosRegEx, body);
+        }
+      }
+      let posValue = parseInt(body);
+      this.log.info('Current position (retrieved via http): %s', posValue);
+
+      if (this.invertPosition) {
+        posValue = 100 - posValue;
+      }
+
+      return posValue;
+    } catch (error: any) {
+      this.log.error('getCurrentPosition() failed: %s', error.message);
+      throw error;
+    }
+  }
+
+  getPositionState = async (): Promise<number> => {
+    if (this.getPositionStateUrl) {
+      try {
+        const response = await httpRequest(this.getPositionStateUrl);
         if (this.pullInterval) {
           this.resetPullTimer();
         }
-
-        if (error) {
-          this.log.error('getCurrentPosition() failed: %s', error.message);
-          reject(error);
-        } else if (response.statusCode !== 200) {
-          this.log.error('getCurrentPosition() returned http error: %s', response.statusCode);
-          reject(new Error('Got http error code ' + response.statusCode));
-        } else {
-          if (this.getCurrentPosRegEx) {
-            let matches = body.match(this.getCurrentPosRegEx);
-            if (matches && matches.length > 1) {
-              body = matches[1];
-              this.log.debug('Retrieving current position via regular expression. Full ungrouped match: %s', matches[0]);
-            } else {
-              this.log.warn('Your CurrentPosRegEx regular expression: "%s" did not match any part of the returned body: "%s"', this.getCurrentPosRegEx, body);
-            }
-          }
-          let posValue = parseInt(body);
-          this.log.info('Current position (retrieved via http): %s', posValue);
-
-          if (this.invertPosition) {
-            posValue = 100 - posValue;
-          }
-
-          resolve(posValue);
+        if (response.status !== 200) {
+          this.log.error('getPositionState() returned http error: %s', response.status);
+          throw new Error('Got http error code ' + response.status);
         }
-      });
-    });
+        const state = parseInt(response.data);
+        this.log.info('Position state: %s', state);
+        return state;
+      } catch (error: any) {
+        this.log.error('getPositionState() failed: %s', error.message);
+        throw error;
+      }
+    } else {
+      this.log.debug('Position state URL not configured. Returning: Stopped (' + Characteristic.PositionState.STOPPED + ')');
+      return Characteristic.PositionState.STOPPED;
+    }
   }
 
-  getPositionState = (): Promise<number> => {
-    return new Promise((resolve, reject) => {
-      if (this.getPositionStateUrl) {
-        httpRequest(this.getPositionStateUrl, (error: any, response: any, body: any) => {
-          if (this.pullInterval) {
-            this.resetPullTimer();
-          }
+  setTargetPosition = async (value: number): Promise<void> => {
+    this.targetPosition = value;
 
-          if (error) {
-            this.log.error('getPositionState() failed: %s', error.message);
-            reject(error);
-          } else if (response.statusCode !== 200) {
-            this.log.error('getPositionState() returned http error: %s', response.statusCode);
-            reject(new Error('Got http error code ' + response.statusCode));
-          } else {
-            const state = parseInt(body);
-            this.log.info('Position state: %s', state);
+    if (this.invertPosition) {
+      value = 100 - value;
+    }
 
-            resolve(state);
-          }
-        });
-      } else {
-        this.log.debug('Position state URL not configured. Returning: Stopped (' + Characteristic.PositionState.STOPPED + ')');
-        resolve(Characteristic.PositionState.STOPPED);
+    let urlObj = { ...this.setTargetPosUrl };
+    urlObj.url = urlObj.url.replace(/%d/g, value.toString());
+    urlObj.body = urlObj.body.replace(/%d/g, value.toString());
+    this.log.info('Requesting: %s for value: %d', urlObj.url, value);
+
+    try {
+      const response = await httpRequest(urlObj);
+      if (response.status !== 200) {
+        this.log.error('setTargetPositionUrl() returned http error: %s; body: %s', response.status, response.data);
+        throw new Error('Got http error code ' + response.status);
       }
-    });
+      this.log.debug('Succesfully requested target position: %d', value);
+    } catch (error: any) {
+      this.log.error('setTargetPositionUrl() failed: %s', error.message);
+      throw error;
+    }
   }
 
-  setTargetPosition = (value: number): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      this.targetPosition = value;
-
-      if (this.invertPosition) {
-        value = 100 - value;
-      }
-
-      let urlObj = { ...this.setTargetPosUrl };
-      urlObj.url = urlObj.url.replace(/%d/g, value.toString());
-      urlObj.body = urlObj.body.replace(/%d/g, value.toString());
-      this.log.info('Requesting: %s for value: %d', urlObj.url, value);
-
-      httpRequest(urlObj, (error: any, response: any, body: any) => {
-        if (error) {
-          this.log.error('setTargetPositionUrl() failed: %s', error.message);
-          reject(error);
-        } else if (response.statusCode !== 200) {
-          this.log.error('setTargetPositionUrl() returned http error: %s; body: %s', response.statusCode, body);
-          reject(new Error('Got http error code ' + response.statusCode));
-        } else {
-          this.log.debug('Succesfully requested target position: %d', value);
-          resolve();
+  getTargetPosition = async (): Promise<number> => {
+    if (this.getTargetPosUrl) {
+      try {
+        const response = await httpRequest(this.getTargetPosUrl);
+        if (response.status !== 200) {
+          this.log.error('getTargetPosition() returned http error: %s', response.status);
+          throw new Error('Got http error code ' + response.status);
         }
-      });
-    });
-  }
-
-  getTargetPosition = (): Promise<number> => {
-    return new Promise((resolve, reject) => {
-      if (this.getTargetPosUrl) {
-        httpRequest(this.getTargetPosUrl, (error: any, response: any, body: any) => {
-          if (error) {
-            this.log.error('getTargetPosition() failed: %s', error.message);
-            reject(error);
-          } else if (response.statusCode !== 200) {
-            this.log.error('getTargetPosition() returned http error: %s', response.statusCode);
-            reject(new Error('Got http error code ' + response.statusCode));
+        let body = response.data;
+        if (this.getTargetPosRegEx) {
+          let matches = body.match(this.getTargetPosRegEx);
+          if (matches && matches.length > 1) {
+            body = matches[1];
+            this.log.debug('Retrieving target position via regular expression. Full ungrouped match: %s', matches[0]);
           } else {
-            if (this.getTargetPosRegEx) {
-              let matches = body.match(this.getTargetPosRegEx);
-              if (matches && matches.length > 1) {
-                body = matches[1];
-                this.log.debug('Retrieving target position via regular expression. Full ungrouped match: %s', matches[0]);
-              } else {
-                this.log.warn('Your TargetPosRegEx regular expression: "%s" did not match any part of the returned body: "%s"', this.getTargetPosRegEx, body);
-              }
-            }
-
-            let targetPosition = parseInt(body);
-            this.log.info('Target position (retrieved via http): %s', targetPosition);
-
-            if (this.invertPosition) {
-              targetPosition = 100 - targetPosition;
-            }
-
-            resolve(targetPosition);
+            this.log.warn('Your TargetPosRegEx regular expression: "%s" did not match any part of the returned body: "%s"', this.getTargetPosRegEx, body);
           }
-        });
-      } else {
-        this.log.info('Target position (retrieved from cache): %s', this.targetPosition);
-        resolve(this.targetPosition);
+        }
+
+        let targetPosition = parseInt(body);
+        this.log.info('Target position (retrieved via http): %s', targetPosition);
+
+        if (this.invertPosition) {
+          targetPosition = 100 - targetPosition;
+        }
+
+        return targetPosition;
+      } catch (error: any) {
+        this.log.error('getTargetPosition() failed: %s', error.message);
+        throw error;
       }
-    });
+    } else {
+      this.log.info('Target position (retrieved from cache): %s', this.targetPosition);
+      return this.targetPosition;
+    }
   }
 }
 
