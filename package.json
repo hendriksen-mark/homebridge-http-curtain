@@ -42,7 +42,7 @@
     "lint": "eslint --max-warnings=0",
     "lint:fix": "eslint --fix --max-warnings=0 .",
     "watch": "nodemon",
-    "build": "rimraf ./dist && tsc",
+    "build": "rimraf ./dist && tsc && npm link",
     "prepublishOnly": "npm run lint && npm run build"
   },
   "main": "dist/src/index.js",
