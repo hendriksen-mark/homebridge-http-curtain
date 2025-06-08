@@ -1,6 +1,7 @@
 // ISC License
 // Original work Copyright (c) 2017, Andreas Bauer
 // Modified work Copyright 2020, Sander van Woensel
+// Updated work Copyright 2025, Mark Hendriksen
 
 "use strict";
 
