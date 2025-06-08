@@ -175,106 +175,110 @@
 	{
 		"type": "fieldset",
 		"title": "Notification Server",
-		"description": "Push notification configuration",
 		"expandable": true,
 		"flex-flow": "row wrap",
 		"displayFlex": true,
 		"flex-direction": "row",
 		"items": [
-		  {
-			  "key": "notificationID",
-			  "type": "notificationID"
-		  },
-		  {
-			"key": "notificationPassword",
-			"type": "notificationPassword"
-		  }
-		]
-	  },
-	  {
-		"type": "fieldset",
-		"title": "Getters",
-		"expandable": true,
-		"flex-flow": "column wrap",
-		"displayFlex": true,
-		"flex-direction": "column",
-		"items": [
 			{
 				"type": "flex",
 				"flex-flow": "row wrap",
-				"title": "Get Current Position",
+				"title": "Push notification configuration",
 				"items": [
-					"getCurrentPosUrl.url",
-					"getCurrentPosUrl.method",
-					"getCurrentPosUrl.body"
-				]
-			},
-			"getCurrentPosRegEx",
-			{
-				"type": "flex",
-				"flex-flow": "row wrap",
-				"title": "Get Target Position",
-				"items": [
-					"getTargetPosUrl.url",
-					"getTargetPosUrl.method"
-				]
-			},
-			"getTargetPosRegEx",
-			{
-				"type": "flex",
-				"flex-flow": "row wrap",
-				"title": "Get Position State",
-				"items": [
-					"getPositionStateUrl.url",
-					"getPositionStateUrl.method"
+					{
+						"key": "notificationID",
+						"type": "notificationID"
+					},
+					{
+						"key": "notificationPassword",
+						"type": "notificationPassword"
+					}
 				]
 			}
 		]
-	  },
-
-	  {
-		"type": "fieldset",
-		"title": "Setters",
-		"expandable": true,
-		"flex-flow": "row wrap",
-		"displayFlex": true,
-		"flex-direction": "row",
-		"items": [
-			{
-				"type": "flex",
-				"flex-flow": "row wrap",
-				"title": "Set Target Position",
-				"items": [
-					"setTargetPosUrl.url",
-					"setTargetPosUrl.method"
-				]
-			}		
-		]
-	  },
-
-	  {
-		"type": "fieldset",
-		"title": "Advanced",
-		"expandable": true,
-		"flex-flow": "column wrap",
-		"displayFlex": true,
-		"flex-direction": "column",
-		"items": [
-			{
-				"type": "flex",
-				"flex-flow": "row wrap",
-				"flex-direction": "row",
-				"title": "Identify",
-				"items": [
-					"identifyUrl.url",
-					"identifyUrl.method"
-				]
-			},
-			"pullInterval",
-			"invertPosition"
-			
-		]
-	  }
+	},
+	{
+	"type": "fieldset",
+	"title": "Getters",
+	"expandable": true,
+	"flex-flow": "column wrap",
+	"displayFlex": true,
+	"flex-direction": "column",
+	"items": [
+		{
+			"type": "flex",
+			"flex-flow": "row wrap",
+			"title": "Get Current Position",
+			"items": [
+				"getCurrentPosUrl.url",
+				"getCurrentPosUrl.method",
+				"getCurrentPosUrl.body"
+			]
+		},
+		"getCurrentPosRegEx",
+		{
+			"type": "flex",
+			"flex-flow": "row wrap",
+			"title": "Get Target Position",
+			"items": [
+				"getTargetPosUrl.url",
+				"getTargetPosUrl.method"
+			]
+		},
+		"getTargetPosRegEx",
+		{
+			"type": "flex",
+			"flex-flow": "row wrap",
+			"title": "Get Position State",
+			"items": [
+				"getPositionStateUrl.url",
+				"getPositionStateUrl.method"
+			]
+		}
+	]
+	},
+	{
+	"type": "fieldset",
+	"title": "Setters",
+	"expandable": true,
+	"flex-flow": "row wrap",
+	"displayFlex": true,
+	"flex-direction": "row",
+	"items": [
+		{
+			"type": "flex",
+			"flex-flow": "row wrap",
+			"title": "Set Target Position",
+			"items": [
+				"setTargetPosUrl.url",
+				"setTargetPosUrl.method"
+			]
+		}		
+	]
+	},
+	{
+	"type": "fieldset",
+	"title": "Advanced",
+	"expandable": true,
+	"flex-flow": "column wrap",
+	"displayFlex": true,
+	"flex-direction": "column",
+	"items": [
+		{
+			"type": "flex",
+			"flex-flow": "row wrap",
+			"flex-direction": "row",
+			"title": "Identify",
+			"items": [
+				"identifyUrl.url",
+				"identifyUrl.method"
+			]
+		},
+		"pullInterval",
+		"invertPosition"
+		
+	]
+	}
 	
 	]
 }
