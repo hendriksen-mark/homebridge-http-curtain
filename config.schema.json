@@ -16,14 +16,11 @@
 			"notificationID": {
 				"title": "Notification ID",
 				"type": "string",
-				"required": false,
-				"default": "my-http-curtain"
+				"placeholder": "my-http-curtain"
 			},
 			"notificationPassword": {
 				"title": "Notification Password",
-				"type": "string",
-				"required": false,
-				"default": ""
+				"type": "string"
 			},
 			"getCurrentPosUrl": {
 				"type": "object",
@@ -33,28 +30,28 @@
 						"type": "string",
 						"title": "URL",
 						"required": true,
-						"default": "http://my-curtain.local/api/v1/pos",
+						"placeholder": "http://my-curtain.local/api/v1/pos",
 						"format": "uri"
 					},
 					"method": {
 						"type": "string",
-						"required": false,
 						"default": "GET",
-						"typeahead": { "source": [ 
-							"GET", "PUT", "POST", "DELETE", "HEAD"
-						]}
+						"enum": [
+							"GET",
+							"PUT",
+							"POST",
+							"DELETE",
+							"HEAD"
+						]
 					},
 					"body": {
-						"type": "string",
-						"required": false
+						"type": "string"
 					}
 				}
 			},
 			"getCurrentPosRegEx": {
 				"title": "Get Current Position Regular Expression",
-				"type": "string",
-				"required": false,
-				"default": ""
+				"type": "string"
 			},
 			"getPositionStateUrl": {
 				"type": "object",
@@ -64,16 +61,18 @@
 						"type": "string",
 						"title": "URL",
 						"description": "Not used by Home app, but here for HomeKit completess.",
-						"required": false,
 						"format": "uri"
 					},
 					"method": {
 						"type": "string",
-						"required": false,
 						"default": "GET",
-						"typeahead": { "source": [ 
-							"GET", "PUT", "POST", "DELETE", "HEAD"
-						]}
+						"enum": [
+							"GET",
+							"PUT",
+							"POST",
+							"DELETE",
+							"HEAD"
+						]
 					}
 				}
 			},
@@ -85,17 +84,19 @@
 						"type": "string",
 						"title": "URL",
 						"description": "%d gets replaced by integer between 0-100.",
-						"required": false,
-						"default": "http://my-curtain.local/api/v1/pos/%d",
+						"placeholder": "http://my-curtain.local/api/v1/pos/%d",
 						"format": "uri"
 					},
 					"method": {
 						"type": "string",
-						"required": false,
 						"default": "GET",
-						"typeahead": { "source": [ 
-							"GET", "PUT", "POST", "DELETE", "HEAD"
-						]}
+						"enum": [
+							"GET",
+							"PUT",
+							"POST",
+							"DELETE",
+							"HEAD"
+						]
 					}
 				}
 			},
@@ -106,24 +107,24 @@
 					"url": {
 						"type": "string",
 						"title": "URL",
-						"required": false,
 						"format": "uri"
 					},
 					"method": {
 						"type": "string",
-						"required": false,
 						"default": "GET",
-						"typeahead": { "source": [ 
-							"GET", "PUT", "POST", "DELETE", "HEAD"
-						]}
+						"enum": [
+							"GET",
+							"PUT",
+							"POST",
+							"DELETE",
+							"HEAD"
+						]
 					}
 				}
 			},
 			"getTargetPosRegEx": {
 				"title": "Get Target Position Regular Expression",
-				"type": "string",
-				"required": false,
-				"default": ""
+				"type": "string"
 			},
 			"identifyUrl": {
 				"type": "object",
@@ -133,152 +134,134 @@
 						"type": "string",
 						"title": "URL",
 						"description": "Fill to support HomeKit identify request supported by (for example) the Eve Home app.",
-						"required": false,
 						"format": "uri"
 					},
 					"method": {
 						"type": "string",
-						"required": false,
 						"default": "GET",
-						"typeahead": { "source": [ 
-							"GET", "PUT", "POST", "DELETE", "HEAD"
-						]}
+						"enum": [
+							"GET",
+							"PUT",
+							"POST",
+							"DELETE",
+							"HEAD"
+						]
 					}
 				}
 			},
 			"pullInterval": {
 				"title": "Pull interval [ms]",
 				"type": "integer",
-				"description": "Leave empty to update position using push method only. Interval in milliseconds to pull position data from the curtain periodically. ",
-				"required": false,
+				"description": "Leave empty to update position using push method only. Interval in milliseconds to pull position data from the curtain periodically.",
 				"minimum": 0
 			},
 			"invertPosition": {
 				"title": "Invert position value",
 				"type": "boolean",
-				"description": "When selected will interpret 0% as fully opened and 100% as fully closed.",
-				"required": false
+				"description": "When selected will interpret 0% as fully opened and 100% as fully closed."
 			}
 		}
 	},
 	"layout": [
-	{
-    	"type": "flex",
-        "flex-flow": "row wrap",
-        "items": [
-        {
-        	"key": "name",
-            "type": "name"
-        }
-       ]
-	},
-	{
-		"type": "fieldset",
-		"title": "Notification Server",
-		"expandable": true,
-		"flex-flow": "row wrap",
-		"displayFlex": true,
-		"flex-direction": "row",
-		"items": [
-			{
-				"type": "flex",
-				"flex-flow": "row wrap",
-				"title": "Push notification configuration",
-				"items": [
-					{
-						"key": "notificationID",
-						"type": "notificationID"
-					},
-					{
-						"key": "notificationPassword",
-						"type": "notificationPassword"
-					}
-				]
-			}
-		]
-	},
-	{
-	"type": "fieldset",
-	"title": "Getters",
-	"expandable": true,
-	"flex-flow": "column wrap",
-	"displayFlex": true,
-	"flex-direction": "column",
-	"items": [
 		{
 			"type": "flex",
 			"flex-flow": "row wrap",
-			"title": "Get Current Position",
 			"items": [
-				"getCurrentPosUrl.url",
-				"getCurrentPosUrl.method",
-				"getCurrentPosUrl.body"
+				"name"
 			]
 		},
-		"getCurrentPosRegEx",
 		{
-			"type": "flex",
+			"type": "fieldset",
+			"title": "Notification Server",
+			"expandable": true,
 			"flex-flow": "row wrap",
-			"title": "Get Target Position",
+			"displayFlex": true,
+			"flex-direction": "row",
 			"items": [
-				"getTargetPosUrl.url",
-				"getTargetPosUrl.method"
+				"notificationID",
+				"notificationPassword"
 			]
 		},
-		"getTargetPosRegEx",
 		{
-			"type": "flex",
-			"flex-flow": "row wrap",
-			"title": "Get Position State",
+			"type": "fieldset",
+			"title": "Getters",
+			"expandable": true,
+			"flex-flow": "column wrap",
+			"displayFlex": true,
+			"flex-direction": "column",
 			"items": [
-				"getPositionStateUrl.url",
-				"getPositionStateUrl.method"
+				{
+					"type": "flex",
+					"flex-flow": "row wrap",
+					"title": "Get Current Position",
+					"items": [
+						"getCurrentPosUrl.url",
+						"getCurrentPosUrl.method",
+						"getCurrentPosUrl.body"
+					]
+				},
+				"getCurrentPosRegEx",
+				{
+					"type": "flex",
+					"flex-flow": "row wrap",
+					"title": "Get Target Position",
+					"items": [
+						"getTargetPosUrl.url",
+						"getTargetPosUrl.method"
+					]
+				},
+				"getTargetPosRegEx",
+				{
+					"type": "flex",
+					"flex-flow": "row wrap",
+					"title": "Get Position State",
+					"items": [
+						"getPositionStateUrl.url",
+						"getPositionStateUrl.method"
+					]
+				}
+			]
+		},
+		{
+			"type": "fieldset",
+			"title": "Setters",
+			"expandable": true,
+			"flex-flow": "row wrap",
+			"displayFlex": true,
+			"flex-direction": "row",
+			"items": [
+				{
+					"type": "flex",
+					"flex-flow": "row wrap",
+					"title": "Set Target Position",
+					"items": [
+						"setTargetPosUrl.url",
+						"setTargetPosUrl.method"
+					]
+				}		
+			]
+		},
+		{
+			"type": "fieldset",
+			"title": "Advanced",
+			"expandable": true,
+			"flex-flow": "column wrap",
+			"displayFlex": true,
+			"flex-direction": "column",
+			"items": [
+				{
+					"type": "flex",
+					"flex-flow": "row wrap",
+					"flex-direction": "row",
+					"title": "Identify",
+					"items": [
+						"identifyUrl.url",
+						"identifyUrl.method"
+					]
+				},
+				"pullInterval",
+				"invertPosition"
 			]
 		}
-	]
-	},
-	{
-	"type": "fieldset",
-	"title": "Setters",
-	"expandable": true,
-	"flex-flow": "row wrap",
-	"displayFlex": true,
-	"flex-direction": "row",
-	"items": [
-		{
-			"type": "flex",
-			"flex-flow": "row wrap",
-			"title": "Set Target Position",
-			"items": [
-				"setTargetPosUrl.url",
-				"setTargetPosUrl.method"
-			]
-		}		
-	]
-	},
-	{
-	"type": "fieldset",
-	"title": "Advanced",
-	"expandable": true,
-	"flex-flow": "column wrap",
-	"displayFlex": true,
-	"flex-direction": "column",
-	"items": [
-		{
-			"type": "flex",
-			"flex-flow": "row wrap",
-			"flex-direction": "row",
-			"title": "Identify",
-			"items": [
-				"identifyUrl.url",
-				"identifyUrl.method"
-			]
-		},
-		"pullInterval",
-		"invertPosition"
-		
-	]
-	}
-	
 	]
 }
