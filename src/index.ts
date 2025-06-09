@@ -95,14 +95,19 @@ class HttpCurtain {
 
     this.pullInterval = config.pullInterval;
 
-    if (config.pullInterval) {
+    if (this.pullInterval) {
       this.pullTimer = new PullTimer(
         log,
-        config.pullInterval as number,
-        this.getCurrentPosition.bind(this),
-        (value: number) => {
-          this.homebridgeService.updateCharacteristic(Characteristic.CurrentPosition, value);
+        this.pullInterval,
+        async () => {
+          const targetPosition = await this.getTargetPosition();
+          this.homebridgeService.updateCharacteristic(Characteristic.TargetPosition, targetPosition);
+          const currentPosition = await this.getCurrentPosition();
+          this.homebridgeService.updateCharacteristic(Characteristic.CurrentPosition, currentPosition);
+          const positionState = await this.getPositionState();
+          this.homebridgeService.updateCharacteristic(Characteristic.PositionState, positionState);
         },
+        undefined,
       );
       this.pullTimer.start();
     }
@@ -202,7 +207,7 @@ class HttpCurtain {
         return;
     }
     this.log.debug('Update received from device: ' + body.characteristic + ': ' + body.value);
-    this.homebridgeService.setCharacteristic(characteristic, value);
+    this.homebridgeService.updateCharacteristic(characteristic, value);
   }
 
   getCurrentPosition = async (): Promise<number> => {
@@ -226,7 +231,7 @@ class HttpCurtain {
         }
       }
       let posValue = parseInt(body);
-      this.log.info('Current position (retrieved via http): %s', posValue);
+      this.log.info('Current position (retrieved via http): %s%', posValue);
 
       if (this.invertPosition) {
         posValue = 100 - posValue;
@@ -281,7 +286,7 @@ class HttpCurtain {
         this.log.error('setTargetPositionUrl() returned http error: %s; body: %s', response.status, response.data);
         throw new Error('Got http error code ' + response.status);
       }
-      this.log.debug('Succesfully requested target position: %d', value);
+      this.log.debug('Succesfully requested target position: %d%', value);
     } catch (error: any) {
       this.log.error('setTargetPositionUrl() failed: %s', error.message);
       throw error;
@@ -292,6 +297,9 @@ class HttpCurtain {
     if (this.getTargetPosUrl) {
       try {
         const response = await http.httpRequest(this.getTargetPosUrl);
+        if (this.pullInterval) {
+          this.pullTimer.resetTimer();
+        }
         if (response.status !== 200) {
           this.log.error('getTargetPosition() returned http error: %s', response.status);
           throw new Error('Got http error code ' + response.status);
@@ -308,7 +316,7 @@ class HttpCurtain {
         }
 
         let targetPosition = parseInt(body);
-        this.log.info('Target position (retrieved via http): %s', targetPosition);
+        this.log.info('Target position (retrieved via http): %s%', targetPosition);
 
         if (this.invertPosition) {
           targetPosition = 100 - targetPosition;
@@ -320,7 +328,7 @@ class HttpCurtain {
         throw error;
       }
     } else {
-      this.log.info('Target position (retrieved from cache): %s', this.targetPosition);
+      this.log.info('Target position (retrieved from cache): %s%', this.targetPosition);
       return this.targetPosition;
     }
   }
