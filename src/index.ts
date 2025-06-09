@@ -13,10 +13,8 @@
 // Constants
 // -----------------------------------------------------------------------------
 
-import { parseUrlProperty } from './configParser';
-import { httpRequest } from './http';
 import PACKAGE_JSON from '../package.json';
-import { setTimeout, clearTimeout } from 'timers';
+import { configParser, http, PullTimer } from 'homebridge-http-utils';
 
 // Homebridge types (install @homebridge/types for best results)
 import type { API, Logging } from 'homebridge';
@@ -97,8 +95,16 @@ class HttpCurtain {
 
     this.pullInterval = config.pullInterval;
 
-    if (this.pullInterval) {
-      this.startPullTimer();
+    if (config.pullInterval) {
+      this.pullTimer = new PullTimer(
+        log,
+        config.pullInterval as number,
+        this.getCurrentPosition.bind(this),
+        (value: number) => {
+          this.homebridgeService.updateCharacteristic(Characteristic.CurrentPosition, value);
+        },
+      );
+      this.pullTimer.start();
     }
 
     this.invertPosition = config.invertPosition || false;
@@ -123,7 +129,7 @@ class HttpCurtain {
       (typeof value.url === 'string' && value.url.trim() !== '')
     ) {
       try {
-        (this as any)[url_command] = parseUrlProperty(value);
+        (this as any)[url_command] = configParser.parseUrlProperty(value);
       } catch (error: any) {
         this.log.warn(`Error occurred while parsing '${url_command}': ${error.message}`);
         this.log.warn('Aborting...');
@@ -143,7 +149,7 @@ class HttpCurtain {
     this.log.info('Identify requested');
     if (this.identifyUrl) {
       try {
-        const response = await httpRequest(this.identifyUrl);
+        const response = await http.httpRequest(this.identifyUrl);
         if (response.status !== 200) {
           this.log.error('identify() returned http error: %s', response.status);
           throw new Error('Got http error code ' + response.status);
@@ -199,64 +205,11 @@ class HttpCurtain {
     this.homebridgeService.setCharacteristic(characteristic, value);
   }
 
-  startPullTimer() {
-    if (!this.pullTimer && this.pullInterval) {
-      this.pullTimer = setTimeout(() => this.handlePullTimer(), this.pullInterval);
-    }
-  }
-
-  resetPullTimer() {
-    if (this.pullTimer) {
-      clearTimeout(this.pullTimer);
-      this.pullTimer = undefined;
-    }
-    this.startPullTimer();
-  }
-
-  stopPullTimer() {
-    if (this.pullTimer) {
-      clearTimeout(this.pullTimer);
-      this.pullTimer = undefined;
-    }
-  }
-
-  private handlePullTimer() {
-    // Update CurrentPosition
-    this.getCurrentPosition()
-      .then(value => {
-        this.homebridgeService.updateCharacteristic(Characteristic.CurrentPosition, value);
-      })
-      .catch(error => {
-        this.log('Error occurred while pulling update from curtain (CurrentPosition): ' + error.message);
-      });
-
-    // Update TargetPosition
-    this.getTargetPosition()
-      .then(value => {
-        this.homebridgeService.updateCharacteristic(Characteristic.TargetPosition, value);
-      })
-      .catch(error => {
-        this.log('Error occurred while pulling update from curtain (TargetPosition): ' + error.message);
-      });
-
-    // Update PositionState
-    this.getPositionState()
-      .then(value => {
-        this.homebridgeService.updateCharacteristic(Characteristic.PositionState, value);
-      })
-      .catch(error => {
-        this.log('Error occurred while pulling update from curtain (PositionState): ' + error.message);
-      });
-
-    // Always reset the pull timer
-    this.resetPullTimer();
-  }
-
   getCurrentPosition = async (): Promise<number> => {
     try {
-      const response = await httpRequest(this.getCurrentPosUrl);
+      const response = await http.httpRequest(this.getCurrentPosUrl);
       if (this.pullInterval) {
-        this.resetPullTimer();
+        this.pullTimer.resetTimer();
       }
       if (response.status !== 200) {
         this.log.error('getCurrentPosition() returned http error: %s', response.status);
@@ -289,9 +242,9 @@ class HttpCurtain {
   getPositionState = async (): Promise<number> => {
     if (this.getPositionStateUrl) {
       try {
-        const response = await httpRequest(this.getPositionStateUrl);
+        const response = await http.httpRequest(this.getPositionStateUrl);
         if (this.pullInterval) {
-          this.resetPullTimer();
+          this.pullTimer.resetTimer();
         }
         if (response.status !== 200) {
           this.log.error('getPositionState() returned http error: %s', response.status);
@@ -323,7 +276,7 @@ class HttpCurtain {
     this.log.info('Requesting: %s for value: %d', urlObj.url, value);
 
     try {
-      const response = await httpRequest(urlObj);
+      const response = await http.httpRequest(urlObj);
       if (response.status !== 200) {
         this.log.error('setTargetPositionUrl() returned http error: %s; body: %s', response.status, response.data);
         throw new Error('Got http error code ' + response.status);
@@ -338,7 +291,7 @@ class HttpCurtain {
   getTargetPosition = async (): Promise<number> => {
     if (this.getTargetPosUrl) {
       try {
-        const response = await httpRequest(this.getTargetPosUrl);
+        const response = await http.httpRequest(this.getTargetPosUrl);
         if (response.status !== 200) {
           this.log.error('getTargetPosition() returned http error: %s', response.status);
           throw new Error('Got http error code ' + response.status);
