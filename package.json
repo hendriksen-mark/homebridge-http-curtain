@@ -35,8 +35,7 @@
     "@eslint/js": "^9.28.0",
     "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.33.1",
-    "rimraf": "^6.0.1",
-    "typedoc": "^0.28.5"
+    "rimraf": "^6.0.1"
   },
   "scripts": {
     "semantic-release": "semantic-release",
@@ -44,8 +43,7 @@
     "lint:fix": "eslint --fix --max-warnings=0 .",
     "watch": "nodemon",
     "build": "rimraf ./dist && tsc && npm link",
-    "prepublishOnly": "npm run lint && npm run build",
-    "docs": "typedoc"
+    "prepublishOnly": "npm run lint && npm run build"
   },
   "main": "dist/src/index.js",
   "nodemonConfig": {
