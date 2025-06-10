@@ -85,16 +85,33 @@ Both configs can be used for a basic plugin configuration.
 ```json
 {
     "accessories": [
-        {
-          "accessory": "HttpCurtain",
-          "name": "Living Room Left Curtain",
-
-          "getCurrentPosUrl": "http://livingroom-curtain-left/api/v1/pos",
-          "setTargetPosUrl": {
-            "url": "http://livingroom-curtain-left/api/v1/pos/%d",
-            "method": "PUT"
-          }
-        }   
+      {
+        "name": "My Curtain",
+        "notificationID": "my-http-curtain",
+        "getCurrentPosUrl": {
+            "url": "http://localhost:8000/CurrentPos",
+            "method": "GET"
+        },
+        "getPositionStateUrl": {
+            "url": "http://localhost:8000/State",
+            "method": "GET"
+        },
+        "setTargetPosUrl": {
+            "url": "http://localhost:8000/setTargetPos/?Pos=%d",
+            "method": "GET"
+        },
+        "getTargetPosUrl": {
+            "url": "http://localhost:8000/getTargetPos",
+            "method": "GET"
+        },
+        "identifyUrl": {
+            "url": "http://localhost:8000/identify",
+            "method": "GET"
+        },
+        "pullInterval": 5000,
+        "invertPosition": false,
+        "accessory": "HttpCurtain"
+      }
     ]
 }
 ```
