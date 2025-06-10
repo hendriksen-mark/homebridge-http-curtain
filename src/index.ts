@@ -213,7 +213,7 @@ class HttpCurtain {
   getCurrentPosition = async (): Promise<number> => {
     try {
       const response = await http.httpRequest(this.getCurrentPosUrl);
-      if (this.pullInterval) {
+      if (this.pullInterval && this.pullTimer) {
         this.pullTimer.resetTimer();
       }
       if (response.status !== 200) {
@@ -248,7 +248,7 @@ class HttpCurtain {
     if (this.getPositionStateUrl) {
       try {
         const response = await http.httpRequest(this.getPositionStateUrl);
-        if (this.pullInterval) {
+        if (this.pullInterval && this.pullTimer) {
           this.pullTimer.resetTimer();
         }
         if (response.status !== 200) {
@@ -297,7 +297,7 @@ class HttpCurtain {
     if (this.getTargetPosUrl) {
       try {
         const response = await http.httpRequest(this.getTargetPosUrl);
-        if (this.pullInterval) {
+        if (this.pullInterval && this.pullTimer) {
           this.pullTimer.resetTimer();
         }
         if (response.status !== 200) {
