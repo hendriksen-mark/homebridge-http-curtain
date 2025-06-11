@@ -286,7 +286,7 @@ class HttpCurtain {
         this.log.error('setTargetPositionUrl() returned http error: %s; body: %s', response.status, response.data);
         throw new Error('Got http error code ' + response.status);
       }
-      this.log.debug('Succesfully requested target position: %d%', value);
+      this.log.debug('Succesfully set target position: %d%', value);
     } catch (error: any) {
       this.log.error('setTargetPositionUrl() failed: %s', error.message);
       throw error;
